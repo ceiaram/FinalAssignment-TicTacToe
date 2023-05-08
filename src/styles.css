@@ -12,6 +12,9 @@ code {
     monospace;
 }
 
+/* .container {
+  height: 300px;
+} */
 .status {
   color: red;
   font-weight: bold;
@@ -19,6 +22,8 @@ code {
 }
 
 .square {
+  display: inline-block;
+
   background: rgb(0, 39, 255);
   background: radial-gradient(
     circle,
@@ -33,10 +38,11 @@ code {
   font-weight: bold;
 }
 
-/* button.square:hover {
-
-} */
-
 .game-info {
   float: left;
+}
+
+button.square {
+  border-color: darkblue;
+  border-radius: 10%;
 }
