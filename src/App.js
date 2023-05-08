@@ -12,13 +12,8 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-function Board() {
-  // 'X' or 'O' is marked based on the turn
-  const [xIsNext, setXIsNext] = useState(true);
-
-  // Know state of each square to check for winner
-  const [squares, setSquares] = useState(Array(9).fill(null));
-
+// Takes three parameters to update board accordingly
+function Board({ xIsNext, squares, onPlay }) {
   // Update the corresponding squares array with the board's state
   function handleClick(i) {
     //If square is already filled OR there is a winner, return to avoid overwritting square
@@ -33,8 +28,9 @@ function Board() {
     } else {
       nextSquares[i] = "O";
     }
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+
+    //Single call to update board
+    onPlay(nextSquares);
   }
 
   // Let the player know that the game is over and who is the winner
@@ -96,13 +92,49 @@ function Board() {
 
 // Display a list of past moves
 export default function Game() {
+  // Added state comppnent to know which player is next and keep the history of moves
+  // 'X' or 'O' is marked based on the turn
+  const [xIsNext, setXIsNext] = useState(true);
+  // Know state of each square to check for winner
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+
+  // Render the squares for the current move
+  const currentSquares = history[history.length - 1];
+
+  // Update the Game's state to re-render
+  function handlePlay(nextSquares) {
+    setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  }
+
+  //'Jump' to past move
+  function jumpTo(nextMove) {
+    // TODO
+  }
+
+  // Display list of moves and make it interactable
+  const moves = history.map((squares, move) => {
+    let description;
+    if (move > 0) {
+      description = "Go to move #" + move;
+    } else {
+      description = "Go to game start";
+    }
+    return (
+      <li>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        {/* Update the game by calling 'Board' component */}
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{/*TODO*/}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   );
