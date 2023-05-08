@@ -93,23 +93,28 @@ function Board({ xIsNext, squares, onPlay }) {
 // Display a list of past moves
 export default function Game() {
   // Added state comppnent to know which player is next and keep the history of moves
-  // 'X' or 'O' is marked based on the turn
-  const [xIsNext, setXIsNext] = useState(true);
   // Know state of each square to check for winner
   const [history, setHistory] = useState([Array(9).fill(null)]);
 
+  // Keep track of which step the user is currently viewing
+  const [currentMove, setCurrentMove] = useState(0);
+
+  // 'X' or 'O' is marked based on the turn
+  const xIsNext = currentMove % 2 === 0;
+
   // Render the squares for the current move
-  const currentSquares = history[history.length - 1];
+  const currentSquares = history[currentMove];
 
   // Update the Game's state to re-render
   function handlePlay(nextSquares) {
-    setHistory([...history, nextSquares]);
-    setXIsNext(!xIsNext);
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
   }
 
-  //'Jump' to past move
+  //'Jump' to selected move in list and update current move
   function jumpTo(nextMove) {
-    // TODO
+    setCurrentMove(nextMove);
   }
 
   // Display list of moves and make it interactable
@@ -121,7 +126,8 @@ export default function Game() {
       description = "Go to game start";
     }
     return (
-      <li>
+      //If reload the rendered game, React’s “key” error should disappear
+      <li key={move}>
         <button onClick={() => jumpTo(move)}>{description}</button>
       </li>
     );
